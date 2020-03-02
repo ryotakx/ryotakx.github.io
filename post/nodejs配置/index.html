@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html lang="zh-cn"><meta charset="utf-8"><meta name="generator" content="Hugo 0.65.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>关于我&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.1b3330a69e07f1ee3c258daa0e9407b80ca2d5231624189a81442ac7050de752d820cb48670987d1c7b757a068835c3b.css" integrity="sha384-GzMwpp4H8e48JY2qDpQHuAyi1SMWJBiagUQqxwUN51LYIMtIZwmH0ce3V6Bog1w7"><body>
+<meta name="supported-color-schemes" content="light dark"><title>配置nodejs&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.1b3330a69e07f1ee3c258daa0e9407b80ca2d5231624189a81442ac7050de752d820cb48670987d1c7b757a068835c3b.css" integrity="sha384-GzMwpp4H8e48JY2qDpQHuAyi1SMWJBiagUQqxwUN51LYIMtIZwmH0ce3V6Bog1w7"><body>
     <div class="base-body"><section id="header" class="site header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">故我依然</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/"></a><a class="nav item" href="/tags/"></a><a class="nav item" href="/">文章</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/categories/">目录</a><a class="nav item" href="/about/">关于我</a></nav></div></span></div><div class="site slogan"><span class="title">Keep Thinking. &nbsp;&nbsp;Keep Alive.</span></div></section><div id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">关于我</h1><p class="article date">2019-02-28<span class="reading-time"></span><span id="/about/" class="leancloud_visitors" data-flag-title="关于我">
+    <h1 class="article title">配置nodejs</h1><p class="article date">2020-02-26<span class="reading-time"></span><span id="/post/nodejs%E9%85%8D%E7%BD%AE/" class="leancloud_visitors" data-flag-title="配置nodejs">
                 <span class="post-meta-item-text">&nbsp;&nbsp;&nbsp;&nbsp;阅读量 </span>
                 <span class="leancloud-visitors-count">1000000</span>
-            </span></p></section><article class="article markdown-body"><p>正在填写中~</p>
-</article></div>
+            </span></p></section><article class="article markdown-body"><h2>1. 下载</h2>
+<pre><code>wget https://nodejs.org/dist/v12.14.1/node-v12.14.1-linux-x64.tar.xz
+</code></pre><h2>2. 解压</h2>
+<pre><code>tar -xvf node-v12.14.1-linux-x64.tar.xz
+</code></pre><p>改一个简单的名字</p>
+<pre><code>sudo mv node-v12.14.1-linux-x64 node12
+</code></pre><h2>3. 配置安装</h2>
+<p>修改/home/ubuntu下的.bashrc文件</p>
+<p>在最后添加：</p>
+<pre><code>export NODE_HOME=/home/ubuntu/node12
+export PATH=$NODE_HOME/bin:$PATH
+</code></pre><h2>4. 安装forever</h2>
+<pre><code>//全局安装
+npm install forever -g 
+//启动       
+forever start app.js 
+//关闭         
+forever stop app.js           
+//输出日志和错误
+forever start -l forever.log -o out.log -e err.log app.js
+//自动监控文件变化，文件修改保存之后自动重启app.js      
+forever -w app.js  
+//查看帮助           
+forever -h 
+</code></pre><h2>附：设置文件链接</h2>
+<pre><code>sudo ln /home/ubuntu/node12/bin/node /usr/local/bin/
+</code></pre></article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/nodejs/>nodejs</a><a class="tag" href=/tags/server/>server</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/"><span class="li">&larr;</span>配置Flask Web服务器</a></p></section>
 <br>
 <div id="vcomments"></div>
 <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
