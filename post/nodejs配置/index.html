@@ -11,16 +11,16 @@
             </span></p></section><article class="article markdown-body"><h2>1. 下载</h2>
 <pre><code>wget https://nodejs.org/dist/v12.14.1/node-v12.14.1-linux-x64.tar.xz
 </code></pre><h2>2. 解压</h2>
-<pre><code>tar -xvf node-v12.14.1-linux-x64.tar.xz
-</code></pre><p>改一个简单的名字</p>
-<pre><code>sudo mv node-v12.14.1-linux-x64 node12
-</code></pre><h2>3. 配置安装</h2>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">tar -xvf node-v12.14.1-linux-x64.tar.xz
+</code></pre></div><p>改一个简单的名字</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo mv node-v12.14.1-linux-x64 node12
+</code></pre></div><h2>3. 配置安装</h2>
 <p>修改/home/ubuntu下的.bashrc文件</p>
 <p>在最后添加：</p>
-<pre><code>export NODE_HOME=/home/ubuntu/node12
-export PATH=$NODE_HOME/bin:$PATH
-</code></pre><h2>4. 安装forever</h2>
-<pre><code>//全局安装
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">NODE_HOME</span><span class="o">=</span>/home/ubuntu/node12
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$NODE_HOME</span>/bin:<span class="nv">$PATH</span>
+</code></pre></div><h2>4. 安装forever</h2>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">//全局安装
 npm install forever -g 
 //启动       
 forever start app.js 
@@ -32,9 +32,9 @@ forever start -l forever.log -o out.log -e err.log app.js
 forever -w app.js  
 //查看帮助           
 forever -h 
-</code></pre><h2>附：设置文件链接</h2>
-<pre><code>sudo ln /home/ubuntu/node12/bin/node /usr/local/bin/
-</code></pre></article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/nodejs/>nodejs</a><a class="tag" href=/tags/server/>server</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/"><span class="li">&larr;</span>配置Flask Web服务器</a></p></section>
+</code></pre></div><h2>附：设置文件链接</h2>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo ln /home/ubuntu/node12/bin/node /usr/local/bin/
+</code></pre></div></article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/nodejs/>nodejs</a><a class="tag" href=/tags/server/>server</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/"><span class="li">&larr;</span>配置Flask Web服务器</a></p></section>
 <br>
 <div id="vcomments"></div>
 <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
