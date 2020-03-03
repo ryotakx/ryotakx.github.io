@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><meta charset="utf-8"><meta name="generator" content="Hugo 0.65.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>配置Hugo博客&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.0aba0bda079b01f3eebfbb8c1ea38725aed38374bf5d8fcf8918855b82159dda540a4a453ce329ba28c8d565549b8c02.css" integrity="sha384-CroL2gebAfPuv7uMHqOHJa7Tg3S/XY/PiRiFW4IVndpUCkpFPOMpuijI1WVUm4wC"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">故我依然</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/"></a><a class="nav item" href="/tags/"></a><a class="nav item" href="/">文章</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/categories/">目录</a><a class="nav item" href="/about/">关于我</a></nav></div></span></div><div class="site slogan"><span class="title">Keep Thinking. &nbsp;&nbsp;Keep Alive.</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">配置Hugo博客</h1><p class="article date">2020-02-28<span class="reading-time"></span><span id="/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/" class="leancloud_visitors" data-flag-title="配置Hugo博客">
+                <span class="post-meta-item-text">&nbsp;&nbsp;&nbsp;&nbsp;阅读量 </span>
+                <span class="leancloud-visitors-count">1000000</span>
+            </span></p></section><article class="article markdown-body"><blockquote>
+<p>一直想搭建一个简单的博客，用Flask之类的动态后端写工作量太大，而且博客也不需要过多复杂的功能。Hugo提供了丰富的模板库，对不熟悉前端的开发者也很友好。Hugo的文档可以看<a href="https://gohugo.io/getting-started/quick-start/"target="_blank">这里</a>。本文主要以MacOS为例。</p>
+</blockquote>
+<h2>1. 下载</h2>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># windows (需要安装chocolatey)</span>
+choco install hugo -confirm
+<span class="c1"># macos (需要安装homebrew)</span>
+brew install hugo
+<span class="c1"># 检查安装</span>
+hugo version
+</code></pre></div><h2>2. 配置工程</h2>
+我这里选择了[hugo-notepadium](https://github.com/ryotakx/hugo-notepadium)主题。为了之后进一步的修改，我先fork了一份到我的github。这里用了git的submodule模块来管理子模块依赖，我在另一篇文章里介绍。
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hugo new site hugo-blog
+<span class="c1"># 添加git以及安装主题</span>
+<span class="nb">cd</span> hugo-blog
+git init
+git submodule add https://github.com/ryotakx/hugo-notepadium themes/hugo-notepadium
+</code></pre></div><p>之后，修改hugo-blog/config.toml文件来配置网站。通常不同的主题有很多可以配置的选项，因此需要拷贝一份刚刚下载的themes/hugo-notepadium/exampleSite中的配置文件。也可以把里面的其他文件（实例博客）一起拷贝了方便修改。</p>
+<h2>3. 开发</h2>
+<p>hugo提供了一个开发服务器：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hugo server -D
+</code></pre></div><p>默认的本地URL是 http://localhost:1313/ 。写作时向content/post文件夹里添加新的.md文件的时候会自动检测更新。要生成可供部署的静态网页：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">hugo -D
+<span class="c1">#如果要更改部署的url</span>
+hugo -D -b https://ryotakx.github.io/
+</code></pre></div><h2>4. 修改theme</h2>
+<p>hugo-notepadium支持基于Disqus的评论系统。但是感觉界面太难看而且需要登录才能评论，我选择了简洁风格的不用登陆的评论系统<a href="https://valine.js.org/index.html"target="_blank">Valine</a>。Valine需要注册LeanCloud账户，在hugo上配置的话我参考了这篇<a href="https://www.smslit.top/2018/07/08/hugo-valine/"target="_blank">文章</a>。简单地说，先获取LearnCloud中的AppID和AppKey，然后添加配置选项：</p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml">  <span class="c"># Valine.</span>
+  <span class="c"># You can get your appid and appkey from https://leancloud.cn</span>
+  <span class="c"># more info please open https://valine.js.org</span>
+  <span class="p">[</span><span class="nx">params</span><span class="p">.</span><span class="nx">valine</span><span class="p">]</span>
+    <span class="nx">enable</span> <span class="p">=</span> <span class="kc">true</span>
+    <span class="nx">appId</span> <span class="p">=</span> <span class="s1">&#39;你的appId&#39;</span>
+    <span class="nx">appKey</span> <span class="p">=</span> <span class="s1">&#39;你的appKey&#39;</span>
+    <span class="nx">notify</span> <span class="p">=</span> <span class="kc">false</span>  <span class="c"># mail notifier , https://github.com/xCss/Valine/wiki</span>
+    <span class="nx">verify</span> <span class="p">=</span> <span class="kc">false</span> <span class="c"># Verification code</span>
+    <span class="nx">avatar</span> <span class="p">=</span> <span class="s1">&#39;mm&#39;</span> 
+    <span class="nx">placeholder</span> <span class="p">=</span> <span class="s1">&#39;说点什么吧...&#39;</span>
+    <span class="nx">visitor</span> <span class="p">=</span> <span class="kc">true</span>
+</code></pre></div><p>然后修改相对应的主题模板文件themes/hugo-notepadium/layouts/partials/中的article-comments.html，需要调整一下cdn：</p>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="c">&lt;!-- valine --&gt;</span>
+  {{- if .Site.Params.valine.enable -}}
+  <span class="c">&lt;!-- id 将作为查询条件 --&gt;</span>
+  <span class="p">&lt;</span><span class="nt">span</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;{{ .URL | relURL }}&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;leancloud_visitors&#34;</span> <span class="na">data-flag-title</span><span class="o">=</span><span class="s">&#34;{{ .Title }}&#34;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;post-meta-item-text&#34;</span><span class="p">&gt;</span>文章阅读量 <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;leancloud-visitors-count&#34;</span><span class="p">&gt;</span>1000000<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;vcomments&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;//cdn1.lncld.net/static/js/3.0.4/av-min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#39;//unpkg.com/valine/dist/Valine.min.js&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/javascript&#34;</span><span class="p">&gt;</span>
+    <span class="k">new</span> <span class="nx">Valine</span><span class="p">({</span>
+        <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#vcomments&#39;</span> <span class="p">,</span>
+        <span class="nx">appId</span><span class="o">:</span> <span class="s1">&#39;{{ .Site.Params.valine.appId }}&#39;</span><span class="p">,</span>
+        <span class="nx">appKey</span><span class="o">:</span> <span class="s1">&#39;{{ .Site.Params.valine.appKey }}&#39;</span><span class="p">,</span>
+        <span class="nx">notify</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Site</span><span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">valine</span><span class="p">.</span><span class="nx">notify</span> <span class="p">}},</span> 
+        <span class="nx">verify</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Site</span><span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">valine</span><span class="p">.</span><span class="nx">verify</span> <span class="p">}},</span> 
+        <span class="nx">avatar</span><span class="o">:</span><span class="s1">&#39;{{ .Site.Params.valine.avatar }}&#39;</span><span class="p">,</span> 
+        <span class="nx">placeholder</span><span class="o">:</span> <span class="s1">&#39;{{ .Site.Params.valine.placeholder }}&#39;</span><span class="p">,</span>
+        <span class="nx">visitor</span><span class="o">:</span> <span class="p">{{</span> <span class="p">.</span><span class="nx">Site</span><span class="p">.</span><span class="nx">Params</span><span class="p">.</span><span class="nx">valine</span><span class="p">.</span><span class="nx">visitor</span> <span class="p">}}</span>
+    <span class="p">});</span>
+  <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  {{- end }}
+</code></pre></div><p>我这里想把文章阅读量放在文章标题栏的下面，因此我把&lt;span&gt;放在了article-header.html。</p>
+<h2>5. 在github.io上部署</h2>
+<p>首先在github上创建一个和自己的用户名重名的仓库，我的就是ryotakx.github.io。然后把刚刚生成的public文件夹的内容上传进github:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> public
+git init
+git remote add origin https://github.com/ryotakx/ryotakx.github.io.git
+git add .
+git commit -m <span class="s2">&#34;update info&#34;</span>
+git push -u origin master
+<span class="c1"># 然后输入Github用户名和密码</span>
+</code></pre></div><p>然后访问 <a href="https://ryotakx.github.io">https://ryotakx.github.io</a> 就可以看到部署好的网页了。</p>
+</article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/blog/>blog</a><a class="tag" href=/tags/hugo/>hugo</a></section></div><section class="article navigation"><p><a class="link" href="/post/gitsubmodule%E6%A8%A1%E5%9D%97/"><span class="li">&larr;</span>使用Git中的submodule模块</a></p><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/"><span class="li">&rarr;</span>配置Flask Web服务器</a></p></section>
+<br>
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+  new Valine({
+      el: '#vcomments' ,
+      appId: 'kjwpiNTfLzkmJNATfug9IPU3-MdYXbMMI',
+      appKey: 'CjHFAFK21dOuOiK2bU1qGXtx',
+      notify:  false , 
+      verify:  false , 
+      avatar:'mm', 
+      placeholder: '有想法...',
+      visitor:  true ,
+      meta: ["nick","mail"]
+  });
+</script></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Weiran Li.</p>
+    <p class="powerby">
+        <span>Powered by </span><a href="https://gohugo.io" target="_blank">Hugo</a>
+        
+    </div></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>

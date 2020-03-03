@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on 故我依然</title>
     <link>/tags/</link>
@@ -7,10 +7,40 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>©2020 Weiran Li.</copyright>
-    <lastBuildDate>Thu, 27 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Mar 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>git</title>
+      <link>/tags/git/</link>
+      <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/git/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>blog</title>
+      <link>/tags/blog/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/blog/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>hugo</title>
+      <link>/tags/hugo/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/hugo/</guid>
+      <description></description>
+      
+    </item>
     
     <item>
       <title>flask</title>
@@ -19,6 +49,7 @@
       
       <guid>/tags/flask/</guid>
       <description></description>
+      
     </item>
     
     <item>
@@ -28,6 +59,7 @@
       
       <guid>/tags/server/</guid>
       <description></description>
+      
     </item>
     
     <item>
@@ -37,6 +69,7 @@
       
       <guid>/tags/nodejs/</guid>
       <description></description>
+      
     </item>
     
   </channel>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>故我依然</title>
     <link>/</link>
@@ -15,10 +15,11 @@
     <item>
       <title>Posts</title>
       <link>/post/</link>
-      <pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/</guid>
       <description></description>
+      
     </item>
     
     <item>
@@ -28,6 +29,7 @@
       
       <guid>/about/</guid>
       <description>正在填写中~</description>
+      
     </item>
     
   </channel>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Categories on 故我依然</title>
-    <link>/categories/</link>
-    <description>Recent content in Categories on 故我依然</description>
+    <title>git on 故我依然</title>
+    <link>/tags/git/</link>
+    <description>Recent content in git on 故我依然</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>©2020 Weiran Li.</copyright>
     <lastBuildDate>Mon, 02 Mar 2020 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/git/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>应用</title>
-      <link>/categories/%E5%BA%94%E7%94%A8/</link>
+      <title>使用Git中的submodule模块</title>
+      <link>/post/gitsubmodule%E6%A8%A1%E5%9D%97/</link>
       <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/categories/%E5%BA%94%E7%94%A8/</guid>
-      <description></description>
+      <guid>/post/gitsubmodule%E6%A8%A1%E5%9D%97/</guid>
+      <description>使用git submodule来管理项目中的依赖。</description>
       
     </item>
     

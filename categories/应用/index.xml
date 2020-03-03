@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>应用 on 故我依然</title>
     <link>/categories/%E5%BA%94%E7%94%A8/</link>
@@ -7,10 +7,30 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>©2020 Weiran Li.</copyright>
-    <lastBuildDate>Thu, 27 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Mar 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/categories/%E5%BA%94%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>使用Git中的submodule模块</title>
+      <link>/post/gitsubmodule%E6%A8%A1%E5%9D%97/</link>
+      <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/gitsubmodule%E6%A8%A1%E5%9D%97/</guid>
+      <description>使用git submodule来管理项目中的依赖。</description>
+      
+    </item>
+    
+    <item>
+      <title>配置Hugo博客</title>
+      <link>/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/</guid>
+      <description>搭建一个简洁风格的Hugo博客并部署在github.io静态博客页面上。</description>
+      
+    </item>
     
     <item>
       <title>配置Flask Web服务器</title>
@@ -19,6 +39,7 @@
       
       <guid>/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid>
       <description>在Ubuntu18.04 上配置完整的Flask + wsgi + Apache2服务器。</description>
+      
     </item>
     
     <item>
@@ -28,6 +49,7 @@
       
       <guid>/post/nodejs%E9%85%8D%E7%BD%AE/</guid>
       <description>在Ubuntu服务器上配置部署NodeJS应用。</description>
+      
     </item>
     
   </channel>

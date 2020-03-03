@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
-    <loc>https://ryotakx.github.io/categories/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/categories/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/tags/git/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/post/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/tags/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/post/gitsubmodule%E6%A8%A1%E5%9D%97/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/categories/%E5%BA%94%E7%94%A8/</loc><lastmod>2020-03-02T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/tags/blog/</loc><lastmod>2020-02-28T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/tags/hugo/</loc><lastmod>2020-02-28T00:00:00+00:00</lastmod></url><url>
+    <loc>https://ryotakx.github.io/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/</loc><lastmod>2020-02-28T00:00:00+00:00</lastmod></url><url>
     <loc>https://ryotakx.github.io/tags/flask/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
-    <loc>https://ryotakx.github.io/post/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
     <loc>https://ryotakx.github.io/tags/server/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
-    <loc>https://ryotakx.github.io/tags/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
-    <loc>https://ryotakx.github.io/categories/%E5%BA%94%E7%94%A8/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
     <loc>https://ryotakx.github.io/post/%E9%85%8D%E7%BD%AEflask&#43;mod_wsgi&#43;apache2%E6%9C%8D%E5%8A%A1%E5%99%A8/</loc><lastmod>2020-02-27T00:00:00+00:00</lastmod></url><url>
     <loc>https://ryotakx.github.io/tags/nodejs/</loc><lastmod>2020-02-26T00:00:00+00:00</lastmod></url><url>
     <loc>https://ryotakx.github.io/post/nodejs%E9%85%8D%E7%BD%AE/</loc><lastmod>2020-02-26T00:00:00+00:00</lastmod></url><url>

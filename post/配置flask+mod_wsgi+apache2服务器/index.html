@@ -28,7 +28,7 @@ bash Miniconda3-latest-Linux-x86_64.sh
 <span class="nb">source</span> ~/.bashrc
 </code></pre></div><h2>2. 搭建flask环境</h2>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 新建虚拟环境</span>
-conda create -n flaskapp <span class="nv">python</span><span class="o">=</span>3
+conda create -n flaskapp <span class="nv">python</span><span class="o">=</span><span class="m">3</span>
 conda activate flaskapp
 <span class="c1"># 这时已经进入flaskapp虚拟环境了</span>
 conda install flask
@@ -80,7 +80,7 @@ nano /etc/apache2/sites-available/FlaskApp.conf
 </code></pre><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># wsgi配置文件</span>
 nano /var/www/flaskapp/flaskapp.wsgi
 </code></pre></div><p>写入内容：</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
@@ -100,7 +100,7 @@ sudo service apache2 restart
 <pre><code>redirect 301 / http://weiran97.com/
 </code></pre><h2>6. 解决winscp没有写入权限的问题</h2>
 <p>更改站点配置，高级选项-SFTP中，将SFTP服务器的值改为sudo /usr/lib/openssh/sftp-server</p>
-</article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/flask/>flask</a><a class="tag" href=/tags/server/>server</a></section></div><section class="article navigation"><p><a class="link" href="/post/nodejs%E9%85%8D%E7%BD%AE/"><span class="li">&rarr;</span>配置nodejs</a></p></section>
+</article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/flask/>flask</a><a class="tag" href=/tags/server/>server</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/"><span class="li">&larr;</span>配置Hugo博客</a></p><p><a class="link" href="/post/nodejs%E9%85%8D%E7%BD%AE/"><span class="li">&rarr;</span>配置nodejs</a></p></section>
 <br>
 <div id="vcomments"></div>
 <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
