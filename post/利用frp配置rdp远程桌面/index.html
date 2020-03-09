@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><meta charset="utf-8"><meta name="generator" content="Hugo 0.65.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>利用frp配置rdp远程桌面&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.0aba0bda079b01f3eebfbb8c1ea38725aed38374bf5d8fcf8918855b82159dda540a4a453ce329ba28c8d565549b8c02.css" integrity="sha384-CroL2gebAfPuv7uMHqOHJa7Tg3S/XY/PiRiFW4IVndpUCkpFPOMpuijI1WVUm4wC"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">故我依然</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/"></a><a class="nav item" href="/tags/"></a><a class="nav item" href="/">文章</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/categories/">目录</a><a class="nav item" href="/about/">关于我</a></nav></div></span></div><div class="site slogan"><span class="title">Keep Thinking. &nbsp;&nbsp;Keep Alive.</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">利用frp配置rdp远程桌面</h1><p class="article date">2020-02-28<span class="reading-time"></span><span id="/post/%E5%88%A9%E7%94%A8frp%E9%85%8D%E7%BD%AErdp%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/" class="leancloud_visitors" data-flag-title="利用frp配置rdp远程桌面">
+                <span class="post-meta-item-text">&nbsp;&nbsp;&nbsp;&nbsp;阅读量 </span>
+                <span class="leancloud-visitors-count">1000000</span>
+            </span></p></section><article class="article markdown-body"><blockquote>
+<p>在外面用笔记本单机跑实验时遇到诸多不便，在服务器端debug费时费力。因此希望能远程到自己宿舍中的台式机来运行一些轻度实验。其他的选项有Teamviewer和TNC Viewer，但是他们用的都是远程投屏的方式，没有声音且感觉不是很安全。因此我选择配置frp服务器的方法来反向代理远程桌面，再笔记本上连接服务器访问。</p>
+</blockquote>
+<h2>1. 准备</h2>
+frp的仓库在[这里](https://github.com/fatedier/frp)。
+考虑到延迟问题，首先需要准备一个地点和带宽合适的服务器。
+在服务器端下载frp并解压：
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">wget https://github.com/fatedier/frp/releases/download/v0.31.2/frp_0.31.2_linux_amd64.tar.gz
+tar -zxvf frp_0.31.2_linux_amd64.tar.gz
+</code></pre></div><p>配置<code>frps.ini</code>文件：</p>
+<pre><code>[common]
+  bind_addr = 0.0.0.0
+  bind_port = 13752 #服务器远程开放的访问端口
+
+  dashboard_port = 13999
+  dashboard_user = username #登录dashboard的用户名密码
+  dashboard_pwd = password
+</code></pre><p>之后在本地Windows下载对应版本的frp，修改<code>frpc.ini</code>文件：</p>
+<pre><code>[common]
+server_addr = 11.22.33.44 #远程服务器地址
+server_port = 13752 #服务器远程开放的访问端口
+
+[rdp]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 3389 #3389是微软远程桌面默认端口
+remote_port = 13701 #访问rdp服务的端口
+</code></pre><h2>2. 运行</h2>
+<p>在服务器端运行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">./frps -c frps.ini
+<span class="c1"># nohup ./frps -c frps.ini 常驻后台</span>
+</code></pre></div><p>然后可以访问ip:13999来访问一下dashboard。</p>
+<p>在window端运行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">.<span class="se">\f</span>rpc
+</code></pre></div><p>没有报错即可。</p>
+<h2>3. windows开机自启以常驻后台</h2>
+<p>利用winsw把frpc注册为系统服务。首先在这里下载<a href="https://github.com/kohsuke/winsw/releases"target="_blank">winsw</a>，解压至frp文件夹内。为了方便可以重命名为winsw.exe。新建一个winsw.xml文件，写入：</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;service&gt;</span>
+    <span class="nt">&lt;id&gt;</span>frp<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;name&gt;</span>frp-remote-desktop<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;description&gt;</span>allow frp service<span class="nt">&lt;/description&gt;</span>
+    <span class="nt">&lt;executable&gt;</span>frpc<span class="nt">&lt;/executable&gt;</span>
+    <span class="nt">&lt;arguments&gt;</span>-c C:\Users\Li\Desktop\frp\frpc.ini<span class="nt">&lt;/arguments&gt;</span>
+    <span class="nt">&lt;onfailure</span> <span class="na">action=</span><span class="s">&#34;restart&#34;</span> <span class="na">delay=</span><span class="s">&#34;60 sec&#34;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;onfailure</span> <span class="na">action=</span><span class="s">&#34;restart&#34;</span> <span class="na">delay=</span><span class="s">&#34;120 sec&#34;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;logmode&gt;</span>reset<span class="nt">&lt;/logmode&gt;</span>
+<span class="nt">&lt;/service&gt;</span>
+</code></pre></div><p>然后运行命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 开始</span>
+.<span class="se">\w</span>insw install
+.<span class="se">\w</span>insw start
+
+<span class="c1"># 关闭</span>
+.<span class="se">\w</span>insw stop
+.<span class="se">\w</span>insw uninstall
+</code></pre></div><p>可以在<code>winsw.out.log</code>文件里看到正确的log输出。</p>
+<p>在笔记本上，远程连接的地址为ip:13701。</p>
+</article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/frp/>frp</a><a class="tag" href=/tags/rdp/>rdp</a><a class="tag" href=/tags/%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/>远程桌面</a></section></div><section class="article navigation"><p><a class="link" href="/post/gitsubmodule%E6%A8%A1%E5%9D%97/"><span class="li">&larr;</span>使用Git中的submodule模块</a></p><p><a class="link" href="/post/%E9%85%8D%E7%BD%AEhugo%E5%8D%9A%E5%AE%A2/"><span class="li">&rarr;</span>配置Hugo博客</a></p></section>
+<br>
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+  new Valine({
+      el: '#vcomments' ,
+      appId: 'kjwpiNTfLzkmJNATfug9IPU3-MdYXbMMI',
+      appKey: 'CjHFAFK21dOuOiK2bU1qGXtx',
+      notify:  false , 
+      verify:  false , 
+      avatar:'mm', 
+      placeholder: '有想法...',
+      visitor:  true ,
+      meta: ["nick","mail"]
+  });
+</script></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Weiran Li.</p>
+    <p class="powerby">
+        <span>Powered by </span><a href="https://gohugo.io" target="_blank">Hugo</a>
+        
+    </div></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>
