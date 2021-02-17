@@ -23,6 +23,16 @@
     </item>
     
     <item>
+      <title>为知笔记&#43;Typora搭建的私人博客</title>
+      <link>/post/%E4%B8%BA%E7%9F%A5%E7%AC%94%E8%AE%B0&#43;typora&#43;chevereto%E7%A7%81%E4%BA%BA%E5%9B%BE%E5%BA%8A/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/%E4%B8%BA%E7%9F%A5%E7%AC%94%E8%AE%B0&#43;typora&#43;chevereto%E7%A7%81%E4%BA%BA%E5%9B%BE%E5%BA%8A/</guid>
+      <description>需要写一些私人markdown日志的时候，搭建博客服务器和图床</description>
+      
+    </item>
+    
+    <item>
       <title>解决Jellyfin外挂中文字幕变成方块的问题</title>
       <link>/post/%E8%A7%A3%E5%86%B3jellyfin%E5%A4%96%E6%8C%82%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%E5%8F%98%E6%88%90%E6%96%B9%E5%9D%97%E7%9A%84%E9%97%AE%E9%A2%98/</link>
       <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>

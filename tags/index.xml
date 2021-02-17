@@ -33,6 +33,26 @@
     </item>
     
     <item>
+      <title>blog</title>
+      <link>/tags/blog/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/blog/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>为知笔记</title>
+      <link>/tags/%E4%B8%BA%E7%9F%A5%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Wed, 28 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/%E4%B8%BA%E7%9F%A5%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
       <title>jellyfin</title>
       <link>/tags/jellyfin/</link>
       <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
@@ -48,16 +68,6 @@
       <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/git/</guid>
-      <description></description>
-      
-    </item>
-    
-    <item>
-      <title>blog</title>
-      <link>/tags/blog/</link>
-      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/blog/</guid>
       <description></description>
       
     </item>
