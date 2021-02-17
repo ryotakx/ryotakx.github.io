@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><meta charset="utf-8"><meta name="generator" content="Hugo 0.80.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>解决Jellyfin外挂中文字幕变成方块的问题&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.0aba0bda079b01f3eebfbb8c1ea38725aed38374bf5d8fcf8918855b82159dda540a4a453ce329ba28c8d565549b8c02.css" integrity="sha384-CroL2gebAfPuv7uMHqOHJa7Tg3S/XY/PiRiFW4IVndpUCkpFPOMpuijI1WVUm4wC"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">故我依然</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/"></a><a class="nav item" href="/tags/"></a><a class="nav item" href="/">文章</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/categories/">目录</a><a class="nav item" href="/about/">关于我</a></nav></div></span></div><div class="site slogan"><span class="title">Keep Thinking. &nbsp;&nbsp;Keep Alive.</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">解决Jellyfin外挂中文字幕变成方块的问题</h1><p class="article date">2020-09-20<span class="reading-time"></span><span id="/post/%E8%A7%A3%E5%86%B3jellyfin%E5%A4%96%E6%8C%82%E4%B8%AD%E6%96%87%E5%AD%97%E5%B9%95%E5%8F%98%E6%88%90%E6%96%B9%E5%9D%97%E7%9A%84%E9%97%AE%E9%A2%98/" class="leancloud_visitors" data-flag-title="解决Jellyfin外挂中文字幕变成方块的问题">
+                <span class="post-meta-item-text">&nbsp;&nbsp;&nbsp;&nbsp;阅读量 </span>
+                <span class="leancloud-visitors-count">1000000</span>
+            </span></p></section><article class="article markdown-body"><p>问题相关的github issue：https://github.com/jellyfin/jellyfin-web/issues/934</p>
+<p>本文的解决办法也是参考了上述issue。</p>
+<p>问题来源：jellyfin的服务端都依赖于一个叫jellyfin-web的框架，其中缺乏对CJK中文字库的支持。外挂的ass特效字幕通常指定了字体，如果服务端没有这个字体就会出现方块。</p>
+<h1 id="方法1">方法1：</h1>
+<p>重新部署jellyfin的docker镜像，把/share/xxx/fonts（自己指定的存放字体的文件夹）挂载到对应容器的/usr/share/fonts中，其他设置不变。这一步可以用portainer比较方便完成，用自带的docker管理软件比较麻烦。然后在刚刚指定的fonts文件夹里放上外挂字幕所需的字体（通常字幕组在文件下载的时候会一并提供）或者以记事本打开.ass文件看一下需要哪些字体。</p>
+<p>最后在客户端的设置/字幕/烧录字幕选项中，选择所有高级特效字幕。然后刷新并选定相应字幕就完成了。</p>
+<p>缺点：1. 由于是在服务器端把字符烧录进入视频流，因此所有视频都会被强制转码。切换字幕的时候整个视频流会停止。服务器负载大。</p>
+<ol start="2">
+<li>安卓手机客户端中目前没有这个烧录字幕选项，因此安卓手机观看还是方块。ios端正常，tv端没有测试。</li>
+</ol>
+<h1 id="方法2">方法2：</h1>
+<p>修改docker中的jellyfin-web和字库相关的代码。开启nas的ssh连接，用putty进入nas。</p>
+<p>首先可以在container station里找到jellyfin的dockerID，我的是e29daf1852d7</p>
+<p>把相关的js代码拷出来</p>
+<p>docker cp e29daf1852d7:/usr/lib/jellyfin/bin/jellyfin-web/components/htmlvideoplayer/plugin.js /share/nas1(自己可以访问的共享文件夹)</p>
+<p>打开这个plugin.js文件，找到renderWithSubtitlesOctopus这个function（大约在1054行，和版本有关），原来的代码是这样的</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">renderWithSubtitlesOctopus</span><span class="p">(</span><span class="nx">videoElement</span><span class="p">,</span> <span class="nx">track</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">attachments</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_currentPlayOptions</span><span class="p">.</span><span class="nx">mediaSource</span><span class="p">.</span><span class="nx">MediaAttachments</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="kd">var</span> <span class="nx">apiClient</span> <span class="o">=</span> <span class="nx">connectionManager</span><span class="p">.</span><span class="nx">getApiClient</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">video</span><span class="o">:</span> <span class="nx">videoElement</span><span class="p">,</span>
+                <span class="nx">subUrl</span><span class="o">:</span> <span class="nx">getTextTrackUrl</span><span class="p">(</span><span class="nx">track</span><span class="p">,</span> <span class="nx">item</span><span class="p">),</span>
+                <span class="nx">fonts</span><span class="o">:</span> <span class="nx">attachments</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">apiClient</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">(</span><span class="nx">i</span><span class="p">.</span><span class="nx">DeliveryUrl</span><span class="p">);</span>
+                <span class="p">}),</span>
+</code></pre></div><p>把它改成这样：</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript">        <span class="kd">function</span> <span class="nx">renderWithSubtitlesOctopus</span><span class="p">(</span><span class="nx">videoElement</span><span class="p">,</span> <span class="nx">track</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">attachments</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_currentPlayOptions</span><span class="p">.</span><span class="nx">mediaSource</span><span class="p">.</span><span class="nx">MediaAttachments</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="kd">var</span> <span class="nx">attachmentsFonts</span> <span class="o">=</span> <span class="nx">attachments</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">i</span><span class="p">.</span><span class="nx">DeliveryUrl</span><span class="p">;</span>
+            <span class="p">});</span>
+            <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">video</span><span class="o">:</span> <span class="nx">videoElement</span><span class="p">,</span>
+                <span class="nx">subUrl</span><span class="o">:</span> <span class="nx">getTextTrackUrl</span><span class="p">(</span><span class="nx">track</span><span class="p">,</span> <span class="nx">item</span><span class="p">),</span>
+                <span class="nx">fonts</span><span class="o">:</span> <span class="nx">attachmentsFonts</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">appRouter</span><span class="p">.</span><span class="nx">baseUrl</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&#34;/libraries/NotoSerifCJKsc-Medium.woff2&#34;</span><span class="p">),</span>
+</code></pre></div><p>主要改动就是指定了fonts字库的路径。这个路径也可以自己修改到方便的位置。NotoSerifCJKsc-Medium.woff2是简体中文的字库，下载位置：</p>
+<p><a href="https://github.com/CodePlayer/webfont-noto/blob/master/dist/NotoSerif/NotoSerifCJKsc-hinted/subset/NotoSerifCJKsc-hinted-standard/NotoSerifCJKsc-Medium.woff2">https://github.com/CodePlayer/webfont-noto/blob/master/dist/NotoSerif/NotoSerifCJKsc-hinted/subset/NotoSerifCJKsc-hinted-standard/NotoSerifCJKsc-Medium.woff2</a></p>
+<p>然后把修改过的代码和字库都导入相应的位置：</p>
+<p>docker cp /share/nas1/plugin.js e29daf1852d7:/usr/lib/jellyfin/bin/jellyfin-web/components/htmlvideoplayer/</p>
+<p>docker cp /share/nas1/NotoSerifCJKsc-Medium.woff2 e29daf1852d7:/usr/lib/jellyfin/bin/jellyfin-web/libraries/</p>
+<p>把烧录选项调回自动，刷新客户端可以看到字幕已经正常了。</p>
+<p>缺点：不能应用ass文件指定的字体。而且修改的代码只对网页端访问生效。安卓端还是没法用。</p>
+<h1 id="3-修改安卓客户端">3. 修改安卓客户端</h1>
+<p>由于jellyfin的各客户端都是以jellyfin-web作为底层框架编写的，所以可以用一样的方法修改安卓客户端。</p>
+<p>准备工作：</p>
+<ol>
+<li>下载jellyfin安卓客户端：</li>
+</ol>
+<p><a href="https://repo.jellyfin.org/releases/client/android/jellyfin-android-release-v1.0.1.apk">https://repo.jellyfin.org/releases/client/android/jellyfin-android-release-v1.0.1.apk</a></p>
+<ol start="2">
+<li>下载Java开发环境JDK</li>
+</ol>
+<p>步骤：</p>
+<ol>
+<li>将下载的apk文件改名为jellyfin.apk，然后打开方式选择winrar。</li>
+<li>把之前修改好的js文件放进jellyfin.apk\assets\www\components\htmlvideoplayer替换源文件。</li>
+<li>把下载的字库NotoSerifCJKsc-Medium.woff2放进jellyfin.apk\assets\www\libraries文件夹里。</li>
+<li>删除META-INF文件夹。修改客户端就完成了。但是现在没法安装，因为修改后的客户端还没有签名。</li>
+<li>拷贝下载好的jdk开发环境中bin文件夹中的keytool.exe，jarsigner.exe，放到和apk同文件夹中。</li>
+<li>打开cmd/powershell，进入所在文件夹。输入</li>
+</ol>
+<p>keytool -genkey -alias key.keystore -keyalg RSA -validity 30000 -keystore key.keystore</p>
+<p>然后适当填写一些信息，之后会生成一个key.keystore的秘钥文件。记住刚刚写的秘钥库的密码。</p>
+<p>jarsigner -verbose -keystore key.keystore -signedjar jellyfin_signed.apk jellyfin.apk key.keystore</p>
+<p>签名完成，把生成的jellyfin_signed.apk导入手机就能安装了。</p>
+<h1 id="附解决jellyfin扫描文件库过于缓慢的问题">附：解决jellyfin扫描文件库过于缓慢的问题。</h1>
+<p>修改/Container/container-station-data/lib/docker/containers/e29&hellip;文件夹中的hosts文件。e29..是jellyfin的docker ID</p>
+<p>在hosts文件后增加两行</p>
+<p>13.225.103.51        api.themoviedb.org
+13.224.157.34        api.thetvdb.com</p>
+<p>每次重启docker后失效</p>
+</article><section class="article labels"><a class="category" href=/categories/nas/>NAS</a><a class="tag" href=/tags/jellyfin/>jellyfin</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E5%89%A7%E8%AF%84%E9%93%81%E8%AF%81%E6%82%AC%E6%A1%88%E7%9C%9F%E7%9F%B3%E4%B9%8B%E9%97%A8%E7%AC%AC%E4%B8%89%E5%AD%A3/"><span class="li">&larr;</span>【剧评】铁证悬案：真石之门 第三季</a></p><p><a class="link" href="/post/gitsubmodule%E6%A8%A1%E5%9D%97/"><span class="li">&rarr;</span>使用Git中的submodule模块</a></p></section>
+<br>
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+  new Valine({
+      el: '#vcomments' ,
+      appId: 'kjwpiNTfLzkmJNATfug9IPU3-MdYXbMMI',
+      appKey: 'CjHFAFK21dOuOiK2bU1qGXtx',
+      notify:  false , 
+      verify:  false , 
+      avatar:'mm', 
+      placeholder: '有想法...',
+      visitor:  true ,
+      meta: ["nick","mail"]
+  });
+</script></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Weiran Li.</p>
+    <p class="powerby">
+        <span>Powered by </span><a href="https://gohugo.io" target="_blank">Hugo</a>
+        
+    </div></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>
