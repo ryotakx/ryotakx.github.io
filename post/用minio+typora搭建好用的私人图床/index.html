@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><meta charset="utf-8"><meta name="generator" content="Hugo 0.80.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>用Minio&#43;Typora搭建好用的私人图床&nbsp;&ndash;&nbsp;故我依然</title><link rel="stylesheet" href="/css/core.min.0aba0bda079b01f3eebfbb8c1ea38725aed38374bf5d8fcf8918855b82159dda540a4a453ce329ba28c8d565549b8c02.css" integrity="sha384-CroL2gebAfPuv7uMHqOHJa7Tg3S/XY/PiRiFW4IVndpUCkpFPOMpuijI1WVUm4wC"><body>
+    <div class="base-body"><section id="header" class="site header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">故我依然</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/"></a><a class="nav item" href="/tags/"></a><a class="nav item" href="/">文章</a><a class="nav item" href="/tags/">标签</a><a class="nav item" href="/categories/">目录</a><a class="nav item" href="/about/">关于我</a></nav></div></span></div><div class="site slogan"><span class="title">Keep Thinking. &nbsp;&nbsp;Keep Alive.</span></div></section><div id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">用Minio+Typora搭建好用的私人图床</h1><p class="article date">2021-02-19<span class="reading-time"></span><span id="/post/%E7%94%A8minio&#43;typora%E6%90%AD%E5%BB%BA%E5%A5%BD%E7%94%A8%E7%9A%84%E7%A7%81%E4%BA%BA%E5%9B%BE%E5%BA%8A/" class="leancloud_visitors" data-flag-title="用Minio&#43;Typora搭建好用的私人图床">
+                <span class="post-meta-item-text">&nbsp;&nbsp;&nbsp;&nbsp;阅读量 </span>
+                <span class="leancloud-visitors-count">1000000</span>
+            </span></p></section><article class="article markdown-body"><blockquote>
+<p>既然重新把公开的博客捡了起来，那还是不要用为知笔记这样难用的东西吧？Chevereto和PicGo/uPic也实在称不上好用。换更简单清晰的Minio试试吧。</p>
+</blockquote>
+<h3 id="前提">前提</h3>
+<p>之前一直用的Chevereto和为知笔记在windows端还行，在mac端就已经很难用了。而且为知笔记的备份导出竟然不是原markdown格式的，这样我一时难以接受。Chevereto和PicGo搭配使用，配置也是相当复杂。于是我捡起了当年搭建的Hugo博客，那么唯一需要解决的就是图床的问题了。</p>
+<h3 id="1-搭建minio服务">1. 搭建Minio服务</h3>
+<p><a target="_blank" rel="noopener noreferrer" 
+  href="http://pic.weiran97.cn/pics/115419.png"><img  src="http://pic.weiran97.cn/pics/115419.png"
+        alt="Minio"/></a></p>
+<p>Minio是类似阿里云OSS的开源对象存储服务。类似私人云盘，可以存储各种格式的数据。在服务器上是以文件夹的形式保存的，意味着很容易备份和迁移。其实Minio更多被用在多用户分布式的存储服务中，而且支持高访问量，单机使用实乃大材小用。</p>
+<ul>
+<li>下载Minio Server并启动</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 下载速度很慢，可以试试本机下载后上传，或者换镜像站dl.minio.org.cn</span>
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /data <span class="c1">#改为自己的想要存储的地方，通常需要支持外网访问</span>
+</code></pre></div><ul>
+<li>修改密码</li>
+</ul>
+<p>在刚刚启动server的地方可以修改，可以找到.minio/config.json里修改accessKey和secretKey。本机的默认访问地址是localhost:9000。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">./minio server /data <span class="p">&amp;</span> <span class="c1"># 后台运行</span>
+ps -aux <span class="p">|</span> grep minio <span class="c1"># 查找进程号</span>
+<span class="nb">kill</span> -9 <span class="m">12345</span> <span class="c1"># 杀进程</span>
+</code></pre></div><p>在管理后台可以上传下载文件或定时分享。</p>
+<ul>
+<li>Apache代理访问已上传图片</li>
+</ul>
+<p>在/etc/apache2/sites-available/000-default中增加如下字段</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;VirtualHost</span> <span class="err">*:80</span><span class="nt">&gt;</span>
+    ServerName your.server.name
+    DocumentRoot /your/data/location
+    ErrorLog ${APACHE_LOG_DIR}/your.server.name-error.log
+    CustomLog ${APACHE_LOG_DIR}/your.server.name-access.log combined
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div><p>如果你想给后台管理页面也代理上，先启动mod_proxy模块</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo a2enmod proxy
+</code></pre></div><p>然后在同样位置增加字段</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;VirtualHost</span> <span class="err">*:80</span><span class="nt">&gt;</span>
+    ServerName your.server.name
+
+    ErrorLog ${APACHE_LOG_DIR}/your.server.name-error.log
+    CustomLog ${APACHE_LOG_DIR}/your.server.name-access.log combined
+
+    ProxyRequests Off
+    ProxyVia Block
+    ProxyPreserveHost On
+
+    <span class="nt">&lt;Proxy</span> <span class="err">*</span><span class="nt">&gt;</span>
+         Require all granted
+    <span class="nt">&lt;/Proxy&gt;</span>
+
+    ProxyPass / http://你的服务器ip:9000/
+    ProxyPassReverse / http://你的服务器ip:9000/
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div><p>记得在域名解析里把子域名的A记录给加上。然后尝试访问一下？</p>
+<h3 id="给typora安排上自动上传的功能">给Typora安排上自动上传的功能</h3>
+<p>Typora有插入图片自动触发脚本并替换图片地址的方便的功能，当然，用PicGO也是一样的功能。用Python编写如下的代码。记得pip安装requests和minio两个模块。</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">minio</span> <span class="kn">import</span> <span class="n">Minio</span>
+<span class="kn">from</span> <span class="nn">minio.error</span> <span class="kn">import</span> <span class="n">InvalidResponseError</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">minioClient</span> <span class="o">=</span> <span class="n">Minio</span><span class="p">(</span><span class="s2">&#34;你的后台管理地址:9000&#34;</span><span class="p">,</span>
+                    <span class="n">access_key</span><span class="o">=</span><span class="s1">&#39;你的账号&#39;</span><span class="p">,</span> <span class="n">secret_key</span><span class="o">=</span><span class="s1">&#39;你的密码&#39;</span><span class="p">,</span> <span class="n">secure</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="s2">&#34;Upload Success:</span><span class="se">\n</span><span class="s2">&#34;</span>
+<span class="n">date</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y%m</span><span class="si">%d</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">image_url</span><span class="p">):</span>
+    <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&#34;/temp&#34;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">code</span><span class="p">:</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">local_path</span>
+
+
+<span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">new_file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid1</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">file_type</span>
+    <span class="k">elif</span> <span class="n">image</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&#34;https://&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&#34;http://&#34;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;.png&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;.jpg&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;.jpeg&#34;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;.gif&#34;</span><span class="p">):</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;/&#34;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+                <span class="n">new_file_name</span> <span class="o">=</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="s2">&#34;error:parsing image error!&#34;</span>
+                <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="s2">&#34;error:parsing image error!&#34;</span>
+            <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="s2">&#34;error:parsing image error!&#34;</span>
+        <span class="k">continue</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">minioClient</span><span class="o">.</span><span class="n">fput_object</span><span class="p">(</span><span class="n">bucket_name</span><span class="o">=</span><span class="s1">&#39;pics&#39;</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="n">date</span><span class="o">+</span><span class="s2">&#34;-&#34;</span><span class="o">+</span><span class="n">new_file_name</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;temp&#34;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="s2">&#34;http://你的域名&#34;</span> <span class="o">+</span> <span class="s2">&#34;/你的bucket名/&#34;</span> <span class="o">+</span> <span class="n">date</span><span class="o">+</span><span class="s2">&#34;-&#34;</span><span class="o">+</span><span class="n">new_file_name</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+    <span class="k">except</span> <span class="n">InvalidResponseError</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="s2">&#34;error:&#34;</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div><p>在后台里的命名方式是日期+uuid。</p>
+<p>然后在Typora界面中填上你的Python脚本的运行指令就行了。也可以设置为对网络位置的图片一并转发。这样就大功告成了！</p>
+<p><img src="http://pic.weiran97.cn/pics/20210219-43e8aedc72ca11ebb7d7acde48001122.png" alt="image-20210219235100880" style="zoom:50%;" /></p>
+</article><section class="article labels"><a class="category" href=/categories/%E5%BA%94%E7%94%A8/>应用</a><a class="tag" href=/tags/blog/>blog</a></section></div><section class="article navigation"><p><a class="link" href="/post/%E5%89%A7%E8%AF%84%E9%93%81%E8%AF%81%E6%82%AC%E6%A1%88%E7%9C%9F%E7%9F%B3%E4%B9%8B%E9%97%A8%E7%AC%AC%E4%B8%89%E5%AD%A3/"><span class="li">&rarr;</span>【剧评】铁证悬案：真石之门 第三季</a></p></section>
+<br>
+<div id="vcomments"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+  new Valine({
+      el: '#vcomments' ,
+      appId: 'kjwpiNTfLzkmJNATfug9IPU3-MdYXbMMI',
+      appKey: 'CjHFAFK21dOuOiK2bU1qGXtx',
+      notify:  false , 
+      verify:  false , 
+      avatar:'mm', 
+      placeholder: '有想法...',
+      visitor:  true ,
+      meta: ["nick","mail"]
+  });
+</script></div><section id="footer" class="footer"><div class="footer-wrap">
+    <p class="copyright">©2020 Weiran Li.</p>
+    <p class="powerby">
+        <span>Powered by </span><a href="https://gohugo.io" target="_blank">Hugo</a>
+        
+    </div></section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/hljs.min.0799348a91dce12c6be4a73f943cfe78f181f4e6f6ec35c4af0fca1de377879f77cfab03c30f03a174d675737b5a9314.js" integrity="sha384-B5k0ipHc4Sxr5Kc/lDz&#43;ePGB9Ob27DXErw/KHeN3h593z6sDww8DoXTWdXN7WpMU"></script><script>hljs.initHighlightingOnLoad();</script></div>
+</body>
+
+</html>

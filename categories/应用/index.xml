@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>©2020 Weiran Li.</copyright>
-    <lastBuildDate>Wed, 28 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 19 Feb 2021 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/categories/%E5%BA%94%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>用Minio&#43;Typora搭建好用的私人图床</title>
+      <link>/post/%E7%94%A8minio&#43;typora%E6%90%AD%E5%BB%BA%E5%A5%BD%E7%94%A8%E7%9A%84%E7%A7%81%E4%BA%BA%E5%9B%BE%E5%BA%8A/</link>
+      <pubDate>Fri, 19 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/%E7%94%A8minio&#43;typora%E6%90%AD%E5%BB%BA%E5%A5%BD%E7%94%A8%E7%9A%84%E7%A7%81%E4%BA%BA%E5%9B%BE%E5%BA%8A/</guid>
+      <description>私人博客感觉还是不够自由啊</description>
+      
+    </item>
     
     <item>
       <title>为知笔记&#43;Typora搭建的私人博客</title>
